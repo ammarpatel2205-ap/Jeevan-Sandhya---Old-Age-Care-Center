@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+        }
+
+        .header {
+            background: #2da0a8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+        }
+
+        .header-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header-buttons button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background: white;
+            color: #2da0a8;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .header-buttons button:hover {
+            background: #23878a;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        form input,
+        form select {
+            padding: 10px;
+            flex: 1;
+            min-width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            padding: 10px 20px;
+            background: #2da0a8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            min-width: 100px;
+            transition: 0.3s;
+        }
+
+        form button:hover {
+            background: #23878a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2da0a8;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .edit-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-left: 5px;
+        }
+
+        .edit-btn:hover {
+            background: #d68910;
+        }
+
+        @media (max-width:600px) {
+            form {
+                flex-direction: column;
+            }
+
+            form button {
+                width: 100%;
+            }
+
+            .header-buttons {
+                flex-direction: column;
+            }
+
+            .header-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Staff Management</h1>
+    </div>
+
+    <div class="container">
+        <h2>Add / Edit Staff</h2>
+        <form id="staffForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <select id="role" required>
+                <option value="">Select Role</option>
+                <option value="Caretaker">Caretaker</option>
+                <option value="Nurse">Nurse</option>
+                <option value="Chef">Chef</option>
+                <option value="Cleaner">Cleaner</option>
+                <option value="Receptionist">Receptionist</option>
+            </select>
+            <input type="text" id="shift" placeholder="Shift" required>
+            <button type="submit">Add Staff</button>
+        </form>
+
+        <h2>Registered Staff</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Shift</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="staffTable"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const apiUrl = "http://localhost:5000/api/staff";
+        let editingId = null;
+
+        async function displayStaff() {
+            const res = await fetch(apiUrl);
+            const staffMembers = await res.json();
+            const table = document.getElementById("staffTable");
+            table.innerHTML = "";
+            staffMembers.forEach(staff => {
+                table.innerHTML += `
+                    <tr>
+                        <td>${staff.name}</td>
+                        <td>${staff.email}</td>
+                        <td>${staff.role}</td>
+                        <td>${staff.shift}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteStaff('${staff._id}')">Delete</button>
+                            <button class="edit-btn" onclick="editStaff('${staff._id}', '${staff.name}', '${staff.email}', '${staff.role}', '${staff.shift}')">Edit</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function editStaff(id, name, email, role, shift) {
+            editingId = id;
+            document.getElementById("name").value = name;
+            document.getElementById("email").value = email;
+            document.getElementById("role").value = role;
+            document.getElementById("shift").value = shift;
+            document.querySelector("form button").textContent = "Update Staff";
+        }
+
+        document.getElementById("staffForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const role = document.getElementById("role").value;
+            const shift = document.getElementById("shift").value;
+
+            if (editingId) {
+                await fetch(`${apiUrl}/${editingId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, role, shift })
+                });
+                editingId = null;
+                document.querySelector("form button").textContent = "Add Staff";
+            } else {
+                await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, role, shift })
+                });
+            }
+
+            displayStaff();
+            e.target.reset();
+        });
+
+        async function deleteStaff(id) {
+            if (confirm("Are you sure you want to delete this staff member?")) {
+                await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+                displayStaff();
+            }
+        }
+
+        displayStaff();
+    </script>
+</body>
+</html>

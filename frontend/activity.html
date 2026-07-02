@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity Management</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#ececec;
+    padding:20px;
+}
+
+/* Main Container */
+.container{
+    width:78%;
+    margin:auto;
+    background:#ffffff;
+    border-radius:8px;
+    padding:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Headings */
+h1{
+    font-size:17px;
+    color:#111;
+    margin-bottom:15px;
+}
+
+h2{
+    font-size:16px;
+    color:#111;
+    margin:18px 0 12px;
+}
+
+/* Form */
+.form-group{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.form-group input{
+    height:38px;
+    padding:0 12px;
+    border:1px solid #d0d0d0;
+    border-radius:5px;
+    font-size:13px;
+    outline:none;
+}
+
+#time{
+    width:30%;
+}
+
+#activity{
+    width:45%;
+}
+
+.add-btn{
+    width:25%;
+    height:38px;
+    border:none;
+    border-radius:5px;
+    background:#2fa4ab;
+    color:#fff;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.add-btn:hover{
+    background:#278f96;
+}
+
+/* Table */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+th{
+    background:#2fa4ab;
+    color:white;
+    padding:10px;
+    font-size:13px;
+    border:none;
+}
+
+td{
+    padding:10px;
+    text-align:center;
+    font-size:13px;
+    border:none;
+    border-bottom:1px solid #eeeeee;
+}
+
+tbody tr:last-child td{
+    border-bottom:none;
+}
+
+/* Buttons */
+.delete-btn{
+    background:#ef4b3f;
+    color:#fff;
+    border:none;
+    padding:6px 12px;
+    font-size:12px;
+    border-radius:4px;
+    cursor:pointer;
+    margin-right:6px;
+}
+
+.edit-btn{
+    background:#f3a000;
+    color:#fff;
+    border:none;
+    padding:6px 12px;
+    font-size:12px;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+.delete-btn:hover{
+    background:#db3c30;
+}
+
+.edit-btn:hover{
+    background:#db9200;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Add / Edit Activity</h1>
+
+<div class="form-group">
+<input type="time" id="time">
+<input type="text" id="activity" placeholder="Activity">
+<button class="add-btn" onclick="addActivity()">Add Activity</button>
+</div>
+
+<h2>Daily Activities</h2>
+
+<table id="activityTable">
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr><td>7:00 AM</td><td>Wake Up</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>8:00 AM</td><td>Breakfast</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>9:00 AM</td><td>Yoga Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>10:00 AM</td><td>Prayer Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>11:00 AM</td><td>Fun Activity</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>1:00 PM</td><td>Lunch Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>2:00 PM</td><td>Rest Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>5:00 PM</td><td>Evening Tea</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>6:00 PM</td><td>Game Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>8:00 PM</td><td>Dinner Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+
+<tr><td>10:00 PM</td><td>Sleeping Time</td><td><button class="delete-btn" onclick="deleteRow(this)">Delete</button><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>
+</tbody>
+</table>
+
+</div>
+
+<script>
+function addActivity(){
+let time=document.getElementById("time").value;
+let activity=document.getElementById("activity").value;
+
+if(time=="" || activity==""){
+alert("Please fill all fields");
+return;
+}
+
+let table=document.getElementById("activityTable").getElementsByTagName("tbody")[0];
+let row=table.insertRow();
+
+row.innerHTML=`
+<td>${formatTime(time)}</td>
+<td>${activity}</td>
+<td>
+<button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+<button class="edit-btn" onclick="editRow(this)">Edit</button>
+</td>
+`;
+
+document.getElementById("time").value="";
+document.getElementById("activity").value="";
+}
+
+function deleteRow(btn){
+btn.parentElement.parentElement.remove();
+}
+
+function editRow(btn){
+let row=btn.parentElement.parentElement;
+
+let newTime=prompt("Enter New Time:",row.cells[0].innerText);
+let newActivity=prompt("Enter New Activity:",row.cells[1].innerText);
+
+if(newTime && newActivity){
+row.cells[0].innerText=newTime;
+row.cells[1].innerText=newActivity;
+}
+}
+
+function formatTime(time){
+let parts=time.split(":");
+let hour=parseInt(parts[0]);
+let minute=parts[1];
+let ampm=hour>=12 ? "PM" : "AM";
+hour=hour%12;
+hour=hour ? hour : 12;
+return hour + ":" + minute + " " + ampm;
+}
+</script>
+</body>
+</html>

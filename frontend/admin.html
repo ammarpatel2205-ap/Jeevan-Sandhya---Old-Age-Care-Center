@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: #f4f6f8;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      /* HEADER */
+      .header {
+        background: #2da0a8;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .header h1 {
+        margin-bottom: 10px;
+      }
+
+      .header-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .header-buttons button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        background: white;
+        color: #2da0a8;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .header-buttons button:hover {
+        background: #23878a;
+        color: white;
+      }
+
+      /* CONTAINER */
+      .container {
+        width: 90%;
+        max-width: 900px;
+        margin: 30px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        margin-bottom: 15px;
+      }
+
+      /* FORM */
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      form input,
+      form select {
+        padding: 10px;
+        flex: 1;
+        min-width: 150px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      form button {
+        padding: 10px 20px;
+        background: #2da0a8;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        min-width: 100px;
+        transition: 0.3s;
+      }
+
+      form button:hover {
+        background: #23878a;
+      }
+
+      /* TABLE */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background: #2da0a8;
+        color: white;
+      }
+
+      /* DELETE BUTTON */
+      .delete-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .delete-btn:hover {
+        background: #c0392b;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 600px) {
+        form {
+          flex-direction: column;
+        }
+
+        form button {
+          width: 100%;
+        }
+
+        .header-buttons {
+          flex-direction: column;
+        }
+
+        .header-buttons button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <h1>Admin Portal</h1>
+      <div class="header-buttons">
+        <button onclick="window.location.href = 'senior.html'">
+          Manage Seniors
+        </button>
+        <button onclick="window.location.href = 'staff.html'">
+          Manage Staff
+        </button>
+        <button onclick="window.location.href = 'activity.html'">
+          Manage Activities
+        </button>
+        <button onclick="window.location.href = 'healthcare.html'">
+          Health Management
+        </button>
+      </div>
+    </div>
+    <h1><u>Manage Users</u></h1>
+    <div class="container">
+       
+      <h2>Registered Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+      </table>
+    </div>
+
+    <script>
+      let users = [
+        { name: "Ammar Patel", email: "ammar@gmail.com", role: "Admin" },
+        { name: "Anas Kukda", email: "anas@gmail.com", role: "User" },
+        { name: "Aryan Tailor", email: "aryan@gmail.com", role: "User" },
+        { name: "Prnavsinh Panwala", email: "prnav@gmail.com", role: "User" },
+        { name: "Khanjan Gandhi", email: "khanjan@gmail.com", role: "User" },
+      ];
+
+      function displayUsers() {
+        const table = document.getElementById("userTable");
+        table.innerHTML = "";
+        users.forEach((user, index) => {
+          table.innerHTML += `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td><button class="delete-btn" onclick="deleteUser(${index})">Delete</button></td>
+                    </tr>
+                `;
+        });
+      }
+
+      function addUser(event) {
+        event.preventDefault();
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const role = document.getElementById("role").value;
+        users.push({ name, email, role });
+        displayUsers();
+        event.target.reset();
+      }
+
+      function deleteUser(index) {
+        if (confirm("Are you sure you want to delete this user?")) {
+          users.splice(index, 1);
+          displayUsers();
+        }
+      }
+
+      displayUsers();
+    </script>
+  </body>
+</html>

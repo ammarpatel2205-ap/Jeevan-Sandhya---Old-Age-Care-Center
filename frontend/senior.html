@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Senior Management</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    .container {
+      width: 90%;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    h2 {
+      color: #2da0a8;
+      text-align: center
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .add {
+      background: #2da0a8;
+      color: #fff
+    }
+
+    .edit {
+      background: #ffa500;
+      color: #fff
+    }
+
+    .del {
+      background: #e74c3c;
+      color: #fff
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background: #2da0a8;
+      color: white;
+    }
+
+    .form-box {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+    }
+    
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Senior Citizens Management</h2>
+
+    <button class="add" onclick="openAdd()">➕ Add Senior</button>
+    <input id="searchName" placeholder="Search by name" onkeyup="searchSenior()">
+
+    <div class="form-box">
+      <h3 id="formTitle">Add Senior</h3>
+
+      <input type="hidden" id="sid">
+      <input id="name" placeholder="Name">
+      <input type="date" id="dob">
+
+      <select id="gender">
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+
+      <input id="address" placeholder="Address">
+      <input id="phone" placeholder="Phone">
+
+      <button class="add" onclick="saveSenior()">Save</button>
+      <button onclick="formBox.style.display='none'">Cancel</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="result"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const api = "http://localhost:5000/api/seniors";
+
+    const formBox = document.querySelector(".form-box");
+    const result = document.getElementById("result");
+
+    const sid = document.getElementById("sid");
+    const name = document.getElementById("name");
+    const dob = document.getElementById("dob");
+    const gender = document.getElementById("gender");
+    const address = document.getElementById("address");
+    const phone = document.getElementById("phone");
+    const searchName = document.getElementById("searchName");
+
+    let seniorsData = [];
+
+    // AGE
+    function calculateAge(d) {
+      const birth = new Date(d);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      return age;
+    }
+
+    // OPEN ADD
+    function openAdd() {
+      formBox.style.display = "block";
+      sid.value = "";
+      name.value = dob.value = gender.value = address.value = phone.value = "";
+      document.getElementById("formTitle").innerText = "Add Senior";
+    }
+
+    // SAVE
+    async function saveSenior() {
+      const data = {
+        name: name.value.trim(),
+        dob: dob.value,
+        gender: gender.value,
+        address: address.value.trim(),
+        phone: phone.value.trim()
+      };
+
+      if (!data.name || !data.dob || !data.phone) {
+        alert("Name, DOB and Phone required");
+        return;
+      }
+
+      const url = sid.value ? `${api}/${sid.value}` : api;
+      const method = sid.value ? "PUT" : "POST";
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const out = await res.json();
+        if (out.success) {
+          alert(out.message);
+          formBox.style.display = "none";
+          loadSeniors();
+        } else {
+          alert(out.message || "Server error");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Cannot connect to backend. Is server running?");
+      }
+    }
+
+    // LOAD
+    async function loadSeniors() {
+      try {
+        const res = await fetch(api);
+        const data = await res.json();
+        if (data.success) {
+          seniorsData = data.seniors;
+          render(seniorsData);
+        } else {
+          alert("Failed to load seniors");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Cannot fetch seniors. Backend may be down.");
+      }
+    }
+
+    // RENDER
+    function render(data) {
+      result.innerHTML = "";
+      data.forEach(s => {
+        result.innerHTML += `
+    <tr>
+      <td>${s.name}</td>
+      <td>${calculateAge(s.dob)}</td>
+      <td>${s.gender || "-"}</td>
+      <td>${s.address || "-"}</td>
+      <td>${s.phone}</td>
+      <td>
+        <button class="edit" onclick='editSenior(${JSON.stringify(s)})'>Edit</button>
+        <button class="del" onclick="deleteSenior('${s._id}')">Delete</button>
+      </td>
+    </tr>`;
+      });
+    }
+
+    // EDIT
+    function editSenior(s) {
+      formBox.style.display = "block";
+      sid.value = s._id;
+      name.value = s.name;
+      dob.value = s.dob.split("T")[0];
+      gender.value = s.gender;
+      address.value = s.address;
+      phone.value = s.phone;
+      document.getElementById("formTitle").innerText = "Edit Senior";
+    }
+
+    // DELETE
+    async function deleteSenior(id) {
+      if (!confirm("Delete this senior?")) return;
+
+      try {
+        const res = await fetch(`${api}/${id}`, { method: "DELETE" });
+        const out = await res.json();
+        if (out.success) {
+          loadSeniors();
+        } else {
+          alert(out.message || "Failed to delete");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Cannot connect to backend. Is server running?");
+      }
+    }
+
+    // SEARCH
+    function searchSenior() {
+      const k = searchName.value.toLowerCase();
+      const filtered = seniorsData.filter(s =>
+        s.name.toLowerCase().includes(k)
+      );
+      render(filtered);
+    }
+
+    window.onload = loadSeniors;
+  </script>
+
+</body>
+</html>

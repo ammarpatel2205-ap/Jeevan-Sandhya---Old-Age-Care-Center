@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Senior Citizens Management</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f4f6f8;
+    }
+
+    h2 {
+      color: #2da0a8;
+      text-align: center;
+    }
+
+    input,
+    select,
+    button {
+      padding: 10px;
+      margin: 5px;
+    }
+
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #2da0a8;
+      color: white;
+      padding: 10px;
+    }
+
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .del {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Senior Citizens Management</h2>
+
+  <form id="seniorForm">
+    <input type="text" placeholder="Name" id="name" required>
+    <input type="number" placeholder="Age" id="age" required>
+
+    <select id="gender">
+      <option>Male</option>
+      <option>Female</option>
+    </select>
+
+    <input type="text" placeholder="Address" id="address" required>
+    <input type="text" placeholder="Phone" id="phone" required>
+
+    <button type="submit">Add Senior</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Address</th>
+        <th>Phone</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="table"></tbody>
+  </table>
+
+  <script src="seniors.js"></script>
+</body>
+
+</html>
