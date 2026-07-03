@@ -6,7 +6,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();   // ← This must come first
 
-app.use(express.static(path.join(__dirname, "public"))); // ← After app is created
+app.use(express.static(path.join(__dirname, "../frontend"))); // ← After app is created
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -271,7 +271,7 @@ app.put('/api/staff/:id', async (req, res) => {
 ===================== */
 const PORT = process.env.PORT || 5000;
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "../frontend", "index.html"));
 });
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
