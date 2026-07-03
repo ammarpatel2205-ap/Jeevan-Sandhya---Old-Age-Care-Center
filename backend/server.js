@@ -17,7 +17,6 @@ import Senior from "./models/Senior.js";
 import { Staff } from "./models/Staff.js";
 
 dotenv.config();
-const app = express();
 
 // Middleware
 app.use(cors());
