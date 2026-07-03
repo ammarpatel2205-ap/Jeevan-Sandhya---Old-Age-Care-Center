@@ -18,7 +18,7 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
 
-  const response = await fetch("http://https://jeevan-sandhya-old-age-care-center.onrender.com/api/signup", {
+  const response = await fetch("https://jeevan-sandhya-old-age-care-center.onrender.com/api/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -43,7 +43,7 @@ document.getElementById("signin-form").addEventListener("submit", async (e) => {
   // role selected (Admin/User)
   const role = document.querySelector('input[name="role"]:checked').value;
 
-  const response = await fetch("http://https://jeevan-sandhya-old-age-care-center.onrender.com/api/login", {
+  const response = await fetch("https://jeevan-sandhya-old-age-care-center.onrender.com/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, role }),
