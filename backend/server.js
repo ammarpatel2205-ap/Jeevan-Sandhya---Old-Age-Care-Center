@@ -1,10 +1,12 @@
+import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "public")));
-import express from "express";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const app = express();   // ← This must come first
+
+app.use(express.static(path.join(__dirname, "public"))); // ← After app is created
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
