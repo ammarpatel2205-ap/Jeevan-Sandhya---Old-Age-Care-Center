@@ -1,12 +1,4 @@
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const app = express();   // ← This must come first
-
-app.use(express.static(path.join(__dirname, "../frontend"))); // ← After app is created
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -17,6 +9,7 @@ import Senior from "./models/Senior.js";
 import { Staff } from "./models/Staff.js";
 
 dotenv.config();
+const app = express();
 
 // Middleware
 app.use(cors());
@@ -270,9 +263,6 @@ app.put('/api/staff/:id', async (req, res) => {
    SERVER
 ===================== */
 const PORT = process.env.PORT || 5000;
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend", "index.html"));
-});
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
