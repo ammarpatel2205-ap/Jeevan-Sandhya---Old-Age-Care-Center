@@ -50,23 +50,8 @@ app.post("/api/signup", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    const normalizedRole = (role || "").toLowerCase();
 
-    let user = null;
-
-    if (normalizedRole) {
-      user = await User.findOne({ email, role: normalizedRole });
-
-      if (!user && normalizedRole === "admin") {
-        user = await User.findOne({ email });
-        if (user && user.role !== "admin") {
-          user = null;
-        }
-      }
-    } else {
-      user = await User.findOne({ email });
-    }
-
+    const user = await User.findOne({ email, role });
     if (!user) {
       return res.json({ success: false, message: "Invalid credentials" });
     }
@@ -86,7 +71,7 @@ app.post("/api/login", async (req, res) => {
       success: true,
       message: "Login successful",
       token,
-      role: user.role
+      role: user.role   // 🔥 IMPORTANT FOR REDIRECT
     });
   } catch (err) {
     res.json({ success: false, message: "Login error" });
